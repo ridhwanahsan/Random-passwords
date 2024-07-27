@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Maker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .box {
+            margin-bottom: 20px;
+        }
+        .box input {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .options {
+            margin-bottom: 20px;
+            text-align: left;
+            display: flex !important;;
+        }
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .length-slider {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .length-slider input {
+            flex: 1;
+            margin: 0 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #4CAF50;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .copy-alert {
+            display: none;
+            margin-top: 10px;
+            color: #28a745;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            button {
+                width: 100%;
+                margin: 10px 0;
+            }
+            .length-slider {
+                flex-direction: column;
+            }
+            .length-slider input {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hard Password Maker</h1>
+        <div class="box">
+            <input type="text" id="passwordBox" placeholder="Password show" readonly>
+        </div>
+        <div class="options">
+            <label>
+                <input type="checkbox" id="uppercase" checked> Include Uppercase
+            </label>
+            <label>
+                <input type="checkbox" id="lowercase" checked> Include Lowercase
+            </label>
+            <label>
+                <input type="checkbox" id="numbers" checked> Include Numbers
+            </label>
+            <label>
+                <input type="checkbox" id="symbols" checked> Include Symbols
+            </label>
+        </div>
+        <div class="length-slider">
+            <label for="lengthRange">Length: <span id="lengthValue">12</span></label>
+            <input type="range" id="lengthRange" min="6" max="20" value="12" oninput="updateLengthValue(this.value)">
+        </div>
+        <button onclick="createPassword()">Make a password</button>
+        <button onclick="copyPassword()">Copy</button>
+        <div id="copyAlert" class="copy-alert">Password copied to clipboard!</div>
+    </div>
+    <script>
+        const passwordBox = document.getElementById("passwordBox");
+        const copyAlert = document.getElementById("copyAlert");
+        const lengthValue = document.getElementById("lengthValue");
+        const lengthRange = document.getElementById("lengthRange");
+        const upperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const lowerCase = "abcdefghijklmnopqrstuvwxyz";
+        const number = "1234567890";
+        const symbol = " !@#$%^&*()_+=+,-./";
+
+        function updateLengthValue(value) {
+            lengthValue.textContent = value;
+        }
+
+        function createPassword() {
+            const length = lengthRange.value;
+            let allchars = "";
+            let password = "";
+            if (document.getElementById("uppercase").checked) {
+                allchars += upperCase;
+                password += upperCase[Math.floor(Math.random() * upperCase.length)];
+            }
+            if (document.getElementById("lowercase").checked) {
+                allchars += lowerCase;
+                password += lowerCase[Math.floor(Math.random() * lowerCase.length)];
+            }
+            if (document.getElementById("numbers").checked) {
+                allchars += number;
+                password += number[Math.floor(Math.random() * number.length)];
+            }
+            if (document.getElementById("symbols").checked) {
+                allchars += symbol;
+                password += symbol[Math.floor(Math.random() * symbol.length)];
+            }
+
+            while (password.length < length) {
+                password += allchars[Math.floor(Math.random() * allchars.length)];
+            }
+            passwordBox.value = password;
+        }
+
+        function copyPassword() {
+            passwordBox.select();
+            document.execCommand("copy");
+            showCopyAlert();
+        }
+
+        function showCopyAlert() {
+            copyAlert.style.display = "block";
+            setTimeout(() => {
+                copyAlert.style.display = "none";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
